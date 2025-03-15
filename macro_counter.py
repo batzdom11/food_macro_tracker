@@ -3,13 +3,10 @@ import requests
 import pandas as pd
 #import matplotlib.pyplot as plt
 import plotly.express as px
+from config import BASE_API_URL
 
-# For a simpler bar chart without Seaborn confusion,
-# you can use matplotlib directly. If you insist on Seaborn,
-# ensure you have 'import seaborn as sns' as well.
 
-# Base URL for your FastAPI
-BASE_API_URL = "https://5aaresabhb.eu.loclx.io"
+
 
 def show():
     st.title("📊 Macro Counter")

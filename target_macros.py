@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
-
-BASE_API_URL = "https://5aaresabhb.eu.loclx.io"
+from config import BASE_API_URL
+#BASE_API_URL = "https://5aaresabhb.eu.loclx.io"
 
 def show():
     st.title("🎯 Target Macro Suggestions")

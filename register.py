@@ -1,7 +1,6 @@
 import streamlit as st
 import requests  # also needed for API calls later
-
-BASE_API_URL = "https://5aaresabhb.eu.loclx.io"
+from config import BASE_API_URL
 
 def show():
     st.title("📝 Register")
