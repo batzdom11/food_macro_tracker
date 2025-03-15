@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
-BASE_API_URL = "https://food-macro-tracker.onrender.com"
+from config import BASE_API_URL, OLLAMA_API_URL
+#BASE_API_URL = "https://food-macro-tracker.onrender.com"
 #OLLAMA_API_URL = "https://5aaresabhb.eu.loclx.io"
 def show():
     st.title("🍽️ Meal Planning")
@@ -112,7 +113,7 @@ def show():
                 "use_food_list": use_food_list_flag
             }
             response = requests.post(
-                f"{BASE_API_URL}/generate_meal/",
+                f"{OLLAMA_API_URL}/generate_meal/",
                 json=request_body
             )
 

@@ -2,6 +2,7 @@ import streamlit as st
 import requests  # also needed for API calls later
 
 BASE_API_URL = "https://food-macro-tracker.onrender.com"
+
 def show():
     st.title("📝 Register")
 

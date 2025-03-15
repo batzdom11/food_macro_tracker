@@ -3,6 +3,7 @@ import requests
 
 
 BASE_API_URL = "https://food-macro-tracker.onrender.com"
+
 def show():
     st.title("🔐 Login")
 
