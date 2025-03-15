@@ -1,8 +1,8 @@
 import streamlit as st
 import requests
 
-API_URL = "https://food-macro-tracker.onrender.com"
 
+BASE_API_URL = "https://food-macro-tracker.onrender.com"
 def show():
     st.title("🔐 Login")
 
@@ -10,7 +10,7 @@ def show():
     password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        response = requests.post(f"{API_URL}/login/", json={"username": username, "password": password})
+        response = requests.post(f"{BASE_API_URL}/login/", json={"username": username, "password": password})
         
         if response.status_code == 200:
             user_data = response.json()

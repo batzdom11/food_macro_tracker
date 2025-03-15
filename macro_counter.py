@@ -3,10 +3,8 @@ import requests
 import pandas as pd
 #import matplotlib.pyplot as plt
 import plotly.express as px
-from config import BASE_API_URL
 
-
-BASE_API_URL = "https://5aaresabhb.eu.loclx.io"
+BASE_API_URL = "https://food-macro-tracker.onrender.com"
 
 def show():
     st.title("📊 Macro Counter")

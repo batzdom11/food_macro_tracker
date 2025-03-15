@@ -4,12 +4,7 @@ import pandas as pd
 #import matplotlib.pyplot as plt
 import plotly.express as px
 
-# For a simpler bar chart without Seaborn confusion,
-# you can use matplotlib directly. If you insist on Seaborn,
-# ensure you have 'import seaborn as sns' as well.
-
-# Base URL for your FastAPI
-BASE_API_URL = "http://127.0.0.1:8000"
+BASE_API_URL = "https://food-macro-tracker.onrender.com"
 
 def show():
     st.title("📊 Macro Counter")
