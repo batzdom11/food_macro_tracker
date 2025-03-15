@@ -6,7 +6,7 @@ import plotly.express as px
 from config import BASE_API_URL
 
 
-
+BASE_API_URL = "https://5aaresabhb.eu.loclx.io"
 
 def show():
     st.title("📊 Macro Counter")
