@@ -29,7 +29,7 @@ if st.session_state["user_id"]:
     if st.sidebar.button("🚪 Logout"):
         st.session_state["user_id"] = None
         st.session_state["username"] = None
-        st.experimental_rerun()
+        st.rerun()
 else:
     selection = st.sidebar.radio("Go to", ["🔐 Login", "📝 Register"])
 
