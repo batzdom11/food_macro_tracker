@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
+from config import BASE_API_URL
 
-API_URL = "https://5aaresabhb.eu.loclx.io"
+BASE_API_URL = "https://5aaresabhb.eu.loclx.io"
 
 def show():
     st.title("🔐 Login")
@@ -10,7 +11,7 @@ def show():
     password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        response = requests.post(f"{API_URL}/login/", json={"username": username, "password": password})
+        response = requests.post(f"{BASE_API_URL}/login/", json={"username": username, "password": password})
         
         if response.status_code == 200:
             user_data = response.json()
