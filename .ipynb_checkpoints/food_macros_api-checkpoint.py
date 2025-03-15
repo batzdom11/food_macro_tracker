@@ -75,7 +75,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Ollama's API endpoint
-OLLAMA_API_URL = "isq7xr3mxn.eu.loclx.io"
+OLLAMA_API_URL = "http://localhost:11434"
 
 # Pydantic schema
 class FoodCreate(BaseModel):
