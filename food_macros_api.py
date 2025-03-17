@@ -253,14 +253,13 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
         logging.info(f"Final prompt sent to OpenAI: {final_prompt}")
 
         # OpenAI API Call
-        response = openai.ChatCompletion.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[{"role": "user", "content": final_prompt}]
         )
-
+        
+        meal_plan = response.choices[0].message.content
         logging.info(f"OpenAI Response: {response}")
-
-        meal_plan = response["choices"][0]["message"]["content"]
 
         return {"meal_plan": meal_plan}
 
@@ -287,7 +286,7 @@ def get_food_macros(food_name: str):
     """
 
     try:
-        response = openai.ChatCompletion.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[{"role": "user", "content": prompt}]
         )
