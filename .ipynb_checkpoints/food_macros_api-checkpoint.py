@@ -244,9 +244,8 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
 
         {prompt}
         """.strip()
-
-        # Make API call to OpenAI instead of Ollama
-        response = openai_client.chat.completions.create(
+        
+        response = openai.ChatCompletion.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[{"role": "user", "content": final_prompt}]
         )
@@ -276,7 +275,7 @@ def get_food_macros(food_name: str):
     """
 
     try:
-        response = openai_client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[{"role": "user", "content": prompt}]
         )
