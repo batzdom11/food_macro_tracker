@@ -218,6 +218,7 @@ def get_meal_by_name(user_id: int, meal_name: str, db: Session = Depends(get_db)
     return meals
 
 
+"""
 @app.post("/generate_meal/")
 def generate_meal(data: dict, db: Session = Depends(get_db)):
     try:
@@ -253,6 +254,24 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
 
         meal_plan = response.choices[0].message.content
 
+        return {"meal_plan": meal_plan}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+"""
+
+@app.post("/generate_meal/")
+def generate_meal(data: dict, db: Session = Depends(get_db)):
+    try:
+        prompt = data.get("prompt", "")
+        use_food_list = data.get("use_food_list", True)
+
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        meal_plan = response.choices[0].message.content
         return {"meal_plan": meal_plan}
 
     except Exception as e:
