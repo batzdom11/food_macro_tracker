@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from config import BASE_API_URL, OLLAMA_API_URL
+from config import BASE_API_URL
 BASE_API_URL = "https://food-macro-tracker.onrender.com"
 
 def show():
@@ -14,7 +14,7 @@ def show():
 
     # 2. Build the dynamic URL with the numeric user_id
     foods_api_url = f"{BASE_API_URL}/foods/{user_id}"
-    macros_api_url = f"{OLLAMA_API_URL}/get_food_macros/"
+    macros_api_url = f"{BASE_API_URL}/get_food_macros/"
 
     # 3. Fetch current foods
     def get_food_list():
@@ -68,7 +68,7 @@ def show():
     if st.button("Get Macros"):
         if food_name:
             try:
-                response = requests.get(f"{macros_api_url}{food_name}")
+                response = requests.get(f"{BASE_API_URL}{food_name}")
                 if response.status_code == 200:
                     data = response.json()
                     if "error" in data:

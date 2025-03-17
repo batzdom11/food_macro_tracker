@@ -6,7 +6,15 @@ import requests
 import json
 import re
 from passlib.context import CryptContext
+import os
+from openai import OpenAI 
 
+
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Load from environment
+if not OPENAI_API_KEY:
+    raise ValueError("Missing OpenAI API Key. Set it in environment variables.")
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 # Database setup (SQLite for local, change to PostgreSQL/MySQL for cloud hosting)
@@ -73,9 +81,6 @@ Base.metadata.create_all(bind=engine)
 
 # FastAPI instance
 app = FastAPI()
-
-# Ollama's API endpoint
-OLLAMA_API_URL = "http://localhost:11434"
 
 # Pydantic schema
 class FoodCreate(BaseModel):
@@ -240,30 +245,25 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
         {prompt}
         """.strip()
 
-        ollama_response = requests.post(
-            OLLAMA_API_URL,
-            json={"model": "llama3.2", "prompt": final_prompt, "stream": False}
+        # Make API call to OpenAI instead of Ollama
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[{"role": "user", "content": final_prompt}]
         )
 
-        if ollama_response.status_code != 200:
-            raise HTTPException(status_code=500, detail="Ollama API error")
+        meal_plan = response.choices[0].message.content
 
-        raw_response = ollama_response.json().get("response", "")
-        if not raw_response:
-            raise HTTPException(status_code=500, detail="Empty response from Ollama")
-
-        return {"meal_plan": raw_response}
+        return {"meal_plan": meal_plan}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 
-# Get Macros for a Food (Ollama API)
 @app.get("/get_food_macros/{food_name}")
 def get_food_macros(food_name: str):
     """
-    Use Ollama to estimate calories & macros per 100g for a given food.
+    Use OpenAI to estimate calories & macros per 100g for a given food.
     """
     prompt = f"""
     Provide the estimated nutritional values per 100g for {food_name} in valid JSON format:
@@ -275,18 +275,27 @@ def get_food_macros(food_name: str):
     }}
     """
 
-    response = requests.post(OLLAMA_API_URL, json={"model": "llama3.2", "prompt": prompt, "stream": False})
-
-    if response.status_code != 200:
-        return {"error": f"Ollama error: {response.text}"}
-
     try:
-        raw_response = response.json().get("response", "")
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini-2024-07-18",
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        # Extract JSON data
+        raw_response = response.choices[0].message.content
         json_match = re.search(r"\{.*\}", raw_response, re.DOTALL)
         food_macros = json.loads(json_match.group(0))
-        return {key: float(food_macros.get(key, 0.0)) for key in ["calories", "protein", "carbs", "fats"]}
+
+        return {
+            "calories": float(food_macros.get("calories", 0.0)),
+            "protein": float(food_macros.get("protein", 0.0)),
+            "carbs": float(food_macros.get("carbs", 0.0)),
+            "fats": float(food_macros.get("fats", 0.0)),
+        }
+
     except Exception as e:
-        return {"error": f"Parsing error: {str(e)}"}
+        return {"error": f"Error retrieving food macros: {str(e)}"}
+
 
 ### Save entries on the Target Macros Page so the user doesn't have to start it over and over
 @app.post("/target_macros/{user_id}")

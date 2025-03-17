@@ -1,8 +1,7 @@
 import streamlit as st
 import requests
-from config import BASE_API_URL, OLLAMA_API_URL
-#BASE_API_URL = "https://food-macro-tracker.onrender.com"
-#OLLAMA_API_URL = "https://5aaresabhb.eu.loclx.io"
+from config import BASE_API_URL
+
 def show():
     st.title("🍽️ Meal Planning")
 
@@ -113,17 +112,21 @@ def show():
                 "use_food_list": use_food_list_flag
             }
             response = requests.post(
-                f"{OLLAMA_API_URL}/generate_meal/",
+                f"{BASE_API_URL}/generate_meal/",
                 json=request_body
             )
 
             if response.status_code == 200:
-                response_json = response.json()  # e.g. {"meal_plan": "JSON from LLM"}
+                response_json = response.json()
                 meal_plan = response_json.get("meal_plan", "")
-
-
-
-                
+            
+                try:
+                    meal_data = json.loads(meal_plan)  # Convert JSON string to Python dict
+                except json.JSONDecodeError:
+                    st.warning("⚠️ Could not parse JSON from meal plan. Showing raw text:")
+                    st.text(meal_plan)
+                    return  # Stop execution if JSON is not valid
+               
                 if meal_plan:
                     st.subheader("🥗 AI-Generated Meal Plan")
                 

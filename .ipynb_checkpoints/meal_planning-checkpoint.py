@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
-
-BASE_API_URL = "http://127.0.0.1:8000"
+from config import BASE_API_URL
 
 def show():
     st.title("🍽️ Meal Planning")
@@ -118,8 +117,16 @@ def show():
             )
 
             if response.status_code == 200:
-                response_json = response.json()  # e.g. {"meal_plan": "JSON from LLM"}
+                response_json = response.json()
                 meal_plan = response_json.get("meal_plan", "")
+            
+                try:
+                    meal_data = json.loads(meal_plan)  # Convert JSON string to Python dict
+                except json.JSONDecodeError:
+                    st.warning("⚠️ Could not parse JSON from meal plan. Showing raw text:")
+                    st.text(meal_plan)
+                    return  # Stop execution if JSON is not valid
+
 
 
 
