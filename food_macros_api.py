@@ -218,11 +218,16 @@ def get_meal_by_name(user_id: int, meal_name: str, db: Session = Depends(get_db)
 
 
 
+import logging
+
 @app.post("/generate_meal/")
 def generate_meal(data: dict, db: Session = Depends(get_db)):
     try:
+        logging.info("Received meal generation request")
         prompt = data.get("prompt", "")
         use_food_list = data.get("use_food_list", True)
+
+        logging.info(f"Use food list: {use_food_list}")
 
         if use_food_list:
             foods = db.query(Food).all()
@@ -244,18 +249,25 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
 
         {prompt}
         """.strip()
-        
+
+        logging.info(f"Final prompt sent to OpenAI: {final_prompt}")
+
+        # OpenAI API Call
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[{"role": "user", "content": final_prompt}]
         )
 
-        meal_plan = response.choices[0].message.content
+        logging.info(f"OpenAI Response: {response}")
+
+        meal_plan = response["choices"][0]["message"]["content"]
 
         return {"meal_plan": meal_plan}
 
     except Exception as e:
+        logging.error(f"Error in meal generation: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 
