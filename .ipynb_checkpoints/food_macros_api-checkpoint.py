@@ -263,7 +263,7 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
                 {"role": "system", "content": "You are a nutrition assistant. Always respond in valid JSON format."},
                 {"role": "user", "content": prompt}
             ],
-            response_format={"type": "json"}  # Forces OpenAI to return JSON
+            response_format={"type": "json_object"}  # Forces OpenAI to return JSON
         )
     
         meal_plan = response.choices[0].message
@@ -299,7 +299,7 @@ def get_food_macros(food_name: str):
                 {"role": "system", "content": "You are a nutrition assistant. Always respond in valid JSON format."},
                 {"role": "user", "content": prompt}
             ],
-            response_format={"type": "json"} 
+            response_format={"type": "json_object"} 
         )
 
         # Extract JSON data
