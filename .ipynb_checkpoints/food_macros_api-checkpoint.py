@@ -222,8 +222,6 @@ def get_meal_by_name(user_id: int, meal_name: str, db: Session = Depends(get_db)
 
 
 
-import logging
-
 @app.post("/generate_meal/")
 def generate_meal(data: dict, db: Session = Depends(get_db)):
     try:
@@ -256,24 +254,26 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
 
         logging.info(f"Final prompt sent to OpenAI: {final_prompt}")
 
-        # OpenAI API Call
+        # Correct OpenAI API call:
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[
                 {"role": "system", "content": "You are a nutrition assistant. Always respond in valid JSON format."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": final_prompt}
             ],
-            response_format={"type": "json_object"}  # Forces OpenAI to return JSON
+            response_format={"type": "json_object"}
         )
-    
-        meal_plan = response.choices[0].message
-        logging.info(f"Full OpenAI Response: {response.model_dump_json(indent=2)}")
-        return {"meal_plan": meal_plan}
+
+        # Parse JSON string returned by OpenAI:
+        response_content = response.choices[0].message.content
+        meal_plan_json = json.loads(response_content)
+        logging.info(f"Parsed OpenAI response: {meal_plan_json}")
+
+        return {"meal_plan": meal_plan_json}
 
     except Exception as e:
         logging.error(f"Error in meal generation: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 
