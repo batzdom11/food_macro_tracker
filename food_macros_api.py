@@ -255,12 +255,15 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
         # OpenAI API Call
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
-            messages=[{"role": "user", "content": final_prompt}]
+            messages=[
+                {"role": "system", "content": "You are a nutrition assistant. Always respond in valid JSON format."},
+                {"role": "user", "content": prompt}
+            ],
+            response_format="json"  # Forces OpenAI to return JSON
         )
-        
-        meal_plan = response.choices[0].message.content
-        logging.info(f"OpenAI Response: {response}")
-
+    
+        meal_plan = response.choices[0].message
+        logging.info(f"Full OpenAI Response: {response.model_dump_json(indent=2)}")
         return {"meal_plan": meal_plan}
 
     except Exception as e:
