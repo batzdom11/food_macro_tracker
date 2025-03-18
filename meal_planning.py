@@ -145,54 +145,59 @@ def show():
                     st.write(meal_plan)
 
                 
-                    import json
-                
-                    try:
-                        # Convert the string meal_plan into a Python dict
-                        meal_data = json.loads(meal_plan)  # Expecting {"meals": [...], ...}
-                
-                        # Show structured tables
-                        if "meals" in meal_data:
-                            # Option A: Single big table for all meals/ingredients
-                            df_rows = []
-                            for meal_item in meal_data["meals"]:
-                                meal_name = meal_item.get("meal", "")
-                                instructions = meal_item.get("recipe", {}).get("instructions", "")
-                                meal_cals = meal_item.get("calories", 0.0)
-                                meal_prot = meal_item.get("protein", 0.0)
-                                meal_carbs = meal_item.get("carbs", 0.0)
-                                meal_fats = meal_item.get("fats", 0.0)
+                import json
                                 
-                                # For each ingredient in recipe
-                                ingredients_list = meal_item.get("recipe", {}).get("ingredients", [])
-                                for ingr in ingredients_list:
-                                    df_rows.append({
-                                        "Meal": meal_name,
-                                        "Food": ingr.get("food", ""),
-                                        "Grams": ingr.get("grams", 0),
-                                        "Calories": meal_cals,
-                                        "Protein": meal_prot,
-                                        "Carbs": meal_carbs,
-                                        "Fats": meal_fats,
-                                        "Instructions": instructions
-                                    })
+                try:
+                    # Convert the string meal_plan into a Python dict
+                    meal_data = json.loads(meal_plan)  # Expecting {"meals": [...], ...}
                 
-                            import pandas as pd
-                                            
-                            # Show each meal in a separate "section":
-                            for meal_item in meal_data["meals"]:
-                                st.markdown(f"#### 🍽️ {meal_item['meal']}")
-                                ingr_df = pd.DataFrame(meal_item['recipe']['ingredients'])
-                                st.table(ingr_df)
-                                st.write(f"Calories: {meal_item['calories']} | Protein: {meal_item['protein']} | Carbs: {meal_item['carbs']} | Fats: {meal_item['fats']}")
-                                st.write("**Instructions:**", meal_item['recipe']['instructions'])
-                            else:
-                                st.write("No 'meals' key found in JSON, showing raw text:")
-                                st.write(meal_plan)
-                    
-                        except json.JSONDecodeError:
-                            st.warning("⚠️ Could not parse JSON from meal plan. Showing raw text:")
-                            st.text(meal_plan)
-                    
-                        else:
-                            st.error("❌ Received empty meal plan.")
+                    # Show structured tables
+                    if "meals" in meal_data:
+                        # Option A: Single big table for all meals/ingredients
+                        df_rows = []
+                        for meal_item in meal_data["meals"]:
+                            meal_name = meal_item.get("meal", "")
+                            instructions = meal_item.get("recipe", {}).get("instructions", "")
+                            meal_cals = meal_item.get("calories", 0.0)
+                            meal_prot = meal_item.get("protein", 0.0)
+                            meal_carbs = meal_item.get("carbs", 0.0)
+                            meal_fats = meal_item.get("fats", 0.0)
+                
+                            # For each ingredient in recipe
+                            ingredients_list = meal_item.get("recipe", {}).get("ingredients", [])
+                            for ingr in ingredients_list:
+                                df_rows.append({
+                                    "Meal": meal_name,
+                                    "Food": ingr.get("food", ""),
+                                    "Grams": ingr.get("grams", 0),
+                                    "Calories": meal_cals,
+                                    "Protein": meal_prot,
+                                    "Carbs": meal_carbs,
+                                    "Fats": meal_fats,
+                                    "Instructions": instructions
+                                })
+                
+                        import pandas as pd
+                                                    
+                        # Show each meal in a separate "section":
+                        for meal_item in meal_data["meals"]:
+                            st.markdown(f"#### 🍽️ {meal_item['meal']}")
+                            ingr_df = pd.DataFrame(meal_item['recipe']['ingredients'])
+                            st.table(ingr_df)
+                            st.write(f"Calories: {meal_item['calories']} | Protein: {meal_item['protein']} | Carbs: {meal_item['carbs']} | Fats: {meal_item['fats']}")
+                            st.write("**Instructions:**", meal_item['recipe']['instructions"])
+                
+                    else:  # This "else" belongs to "if 'meals' in meal_data"
+                        st.write("No 'meals' key found in JSON, showing raw text:")
+                        st.write(meal_plan)
+                
+                except json.JSONDecodeError:
+                    st.warning("⚠️ Could not parse JSON from meal plan. Showing raw text:")
+                    st.text(meal_plan)
+                
+                except Exception as e:  # Catch any other unexpected errors
+                    st.error(f"❌ An unexpected error occurred: {str(e)}")
+                
+                # This "else" at the bottom was wrongly placed before.
+                if not meal_data:
+                    st.error("❌ Received empty meal plan.")
