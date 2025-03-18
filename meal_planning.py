@@ -185,7 +185,7 @@ def show():
                             ingr_df = pd.DataFrame(meal_item['recipe']['ingredients'])
                             st.table(ingr_df)
                             st.write(f"Calories: {meal_item['calories']} | Protein: {meal_item['protein']} | Carbs: {meal_item['carbs']} | Fats: {meal_item['fats']}")
-                            st.write("**Instructions:**", meal_item['recipe']['instructions"])
+                            st.write("**Instructions:**", meal_item['recipe']['instructions'])
                 
                     else:  # This "else" belongs to "if 'meals' in meal_data"
                         st.write("No 'meals' key found in JSON, showing raw text:")
