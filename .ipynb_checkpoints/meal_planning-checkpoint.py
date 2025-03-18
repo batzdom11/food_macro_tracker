@@ -128,8 +128,22 @@ def show():
                     st.text(meal_plan)
                     return  # Stop execution if JSON is not valid
                
-                if meal_plan:
+                if meal_data:
                     st.subheader("🥗 AI-Generated Meal Plan")
+            
+                    import pandas as pd
+                                                        
+                    # Show each meal in a separate "section":
+                    for meal_item in meal_data["meals"]:
+                        st.markdown(f"#### 🍽️ {meal_item['meal']}")
+                        ingr_df = pd.DataFrame(meal_item['recipe']['ingredients'])
+                        st.table(ingr_df)
+                        st.write(f"Calories: {meal_item['calories']} | Protein: {meal_item['protein']} | Carbs: {meal_item['carbs']} | Fats: {meal_item['fats']}")
+                        st.write("**Instructions:**", meal_item['recipe']['instructions'])
+                else:
+                    st.write("No 'meals' key found in JSON, showing raw text:")
+                    st.write(meal_plan)
+
                 
                     import json
                 
