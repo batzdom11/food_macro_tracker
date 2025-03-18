@@ -186,13 +186,13 @@ def show():
                                 st.table(ingr_df)
                                 st.write(f"Calories: {meal_item['calories']} | Protein: {meal_item['protein']} | Carbs: {meal_item['carbs']} | Fats: {meal_item['fats']}")
                                 st.write("**Instructions:**", meal_item['recipe']['instructions'])
+                            else:
+                                st.write("No 'meals' key found in JSON, showing raw text:")
+                                st.write(meal_plan)
+                    
+                        except json.JSONDecodeError:
+                            st.warning("⚠️ Could not parse JSON from meal plan. Showing raw text:")
+                            st.text(meal_plan)
+                    
                         else:
-                            st.write("No 'meals' key found in JSON, showing raw text:")
-                            st.write(meal_plan)
-                
-                    except json.JSONDecodeError:
-                        st.warning("⚠️ Could not parse JSON from meal plan. Showing raw text:")
-                        st.text(meal_plan)
-                
-                else:
-                    st.error("❌ Received empty meal plan.")
+                            st.error("❌ Received empty meal plan.")

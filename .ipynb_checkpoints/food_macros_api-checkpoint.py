@@ -125,6 +125,10 @@ def get_db():
     finally:
         db.close()
 
+@app.get("/")
+def root():
+    return {"message": "FastAPI is running"}
+
 # User registration and login
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
