@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import json  # This is missing, causing the error
 from config import BASE_API_URL
 
 def show():
@@ -122,15 +123,11 @@ def show():
             
                 try:
                     meal_data = json.loads(meal_plan)  # Convert JSON string to Python dict
-                except json.JSONDecodeError:
-                    st.warning("⚠️ Could not parse JSON from meal plan. Showing raw text:")
+                except (json.JSONDecodeError, TypeError) as e:
+                    st.warning(f"⚠️ Could not parse JSON from meal plan: {str(e)}")
                     st.text(meal_plan)
                     return  # Stop execution if JSON is not valid
-
-
-
-
-                
+               
                 if meal_plan:
                     st.subheader("🥗 AI-Generated Meal Plan")
                 
