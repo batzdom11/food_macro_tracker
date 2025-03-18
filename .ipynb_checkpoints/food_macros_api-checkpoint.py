@@ -291,14 +291,15 @@ def get_food_macros(food_name: str):
     try:
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[
+                {"role": "system", "content": "You are a nutrition assistant. Always respond in valid JSON format."},
+                {"role": "user", "content": prompt}
+            ],
+            response_format="json"
         )
 
         # Extract JSON data
-        raw_response = response.choices[0].message.content
-        json_match = re.search(r"\{.*\}", raw_response, re.DOTALL)
-        food_macros = json.loads(json_match.group(0))
-
+        food_macros = response.choices[0].message.content
         return {
             "calories": float(food_macros.get("calories", 0.0)),
             "protein": float(food_macros.get("protein", 0.0)),
@@ -307,7 +308,11 @@ def get_food_macros(food_name: str):
         }
 
     except Exception as e:
-        return {"error": f"Error retrieving food macros: {str(e)}"}
+        logging.error(f"Error retrieving food macros for {food_name}: {str(e)}")
+        return {
+            "error": f"Could not retrieve macros for {food_name}. Please try again later.",
+            "details": str(e)
+        }
 
 
 ### Save entries on the Target Macros Page so the user doesn't have to start it over and over
