@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, Column, String, Float, Integer, ForeignKey
 from sqlalchemy.orm import sessionmaker, Session, declarative_base
 import requests
 import json
+import logging
 import re
 from passlib.context import CryptContext
 import os
