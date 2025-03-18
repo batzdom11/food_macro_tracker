@@ -69,7 +69,7 @@ def show():
     if st.button("Get Macros"):
         if food_name:
             try:
-                response = requests.get(f"{BASE_API_URL}/{food_name}")
+                response = requests.get(f"{BASE_API_URL}/get_food_macros/{food_name}")
                 if response.status_code == 200:
                     data = response.json()
                     if "error" in data:
