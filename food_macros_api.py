@@ -305,11 +305,12 @@ def get_food_macros(food_name: str):
 
         # Extract JSON data
         food_macros = response.choices[0].message.content
+        macros_json = json.loads(food_macros)
         return {
-            "calories": float(food_macros.get("calories", 0.0)),
-            "protein": float(food_macros.get("protein", 0.0)),
-            "carbs": float(food_macros.get("carbs", 0.0)),
-            "fats": float(food_macros.get("fats", 0.0)),
+            "calories": float(macros_json.get("calories", 0.0)),
+            "protein": float(macros_json.get("protein", 0.0)),
+            "carbs": float(macros_json.get("carbs", 0.0)),
+            "fats": float(macros_json.get("fats", 0.0)),
         }
 
     except Exception as e:
