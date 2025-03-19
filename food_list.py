@@ -71,7 +71,7 @@ def show():
     search_food_name = st.text_input("Enter a food name to search:")
 
     if st.button("Search Macros"):
-        if food_name:
+        if search_food_name:
             try:
                 response = requests.get(f"{macros_api_url}{food_name}")
                 if response.status_code == 200:
