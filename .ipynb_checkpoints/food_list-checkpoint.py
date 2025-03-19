@@ -91,8 +91,8 @@ def show():
     new_food_name = st.text_input("Food Name", value=search_food_name)
     calories = st.number_input("Calories (kcal per 100g)", value=float(food_macros.get("calories", 0)), step=1.0)
     protein = st.number_input("Protein (g)", value=float(food_macros.get("protein", 0)), step=0.1)
-    carbs = st.number_input("Carbs (g)", value=float(food_macros.get("carbs")), step=0.1)
-    fats = st.number_input("Fats (g)", value=float(food_macros.get("fats")), step=0.1)
+    carbs = st.number_input("Carbs (g)", value=float(food_macros.get("carbs", 0)), step=0.1)
+    fats = st.number_input("Fats (g)", value=float(food_macros.get("fats", 0)), step=0.1)
 
     if st.button("Add Food"):
         if new_food_name:
