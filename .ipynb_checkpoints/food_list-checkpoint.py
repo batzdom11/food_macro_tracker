@@ -73,10 +73,10 @@ def show():
     if st.button("Search Macros"):
         if search_food_name:
             try:
-                response = requests.get(f"{macros_api_url}{food_name}")
+                response = requests.get(f"{macros_api_url}{search_food_name}")
                 if response.status_code == 200:
                     st.session_state["food_macros"] = response.json()
-                    st.success(f"✅ Macros for {food_name} loaded.")
+                    st.success(f"✅ Macros for {search_food_name} loaded.")
                 else:
                     st.error(f"❌ Error fetching macros: {response.text}")
             except requests.exceptions.RequestException as e:
