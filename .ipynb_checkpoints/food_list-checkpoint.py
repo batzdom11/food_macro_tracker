@@ -5,7 +5,7 @@ from config import BASE_API_URL
 
 
 def show():
-    st.title("🥗 Food List & Management")
+    st.title("Food List & Management 🥗")
 
     # Ensure user is logged in
     user_id = st.session_state.get("user_id")
@@ -32,7 +32,7 @@ def show():
     foods = get_food_list()
 
     # Display the food list as a DataFrame for better structure
-    st.subheader("📋 Your Food List")
+    st.subheader("Your Food List 📋")
     if foods:
         df_foods = pd.DataFrame(foods)
         df_display = df = df = foods if foods else []
@@ -49,7 +49,7 @@ def show():
         st.info("No foods available. Add some below!")
 
     # Delete a Food
-    st.subheader("🗑️ Delete a Food")
+    st.subheader("Delete a Food 🗑️")
     food_to_delete = st.selectbox("Select a food to delete", [f["name"] for f in foods] if foods else [])
 
     if st.button("Delete Food"):
@@ -67,7 +67,7 @@ def show():
             st.warning("⚠️ No food selected.")
 
     # Search and auto-fill macros
-    st.subheader("🔍 Search Food Macros")
+    st.subheader("Search Food Macros 🔍")
     search_food_name = st.text_input("Enter a food name to search:")
 
     if st.button("Search Macros"):
@@ -85,7 +85,7 @@ def show():
             st.warning("⚠️ Please enter a food name.")
 
     # Add New Food
-    st.subheader("➕ Add a New Food")
+    st.subheader("Add a New Food ➕")
     food_macros = st.session_state.get("food_macros", {})
 
     new_food_name = st.text_input("Food Name", value=search_food_name)

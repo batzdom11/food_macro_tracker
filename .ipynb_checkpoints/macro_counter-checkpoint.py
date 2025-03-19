@@ -3,11 +3,12 @@ import requests
 import pandas as pd
 #import matplotlib.pyplot as plt
 import plotly.express as px
+from config import BASE_API_URL
 
-BASE_API_URL = "https://food-macro-tracker.onrender.com"
+#BASE_API_URL = "https://food-macro-tracker.onrender.com"
 
 def show():
-    st.title("📊 Macro Counter")
+    st.title("Macro Counter 📊")
     
     # Ensure session state exists for meal ingredients
     if "meal_ingredients" not in st.session_state:
@@ -47,7 +48,7 @@ def show():
 
     
     num_meals = st.number_input(
-        "🍽️ Select number of meals today:", 
+        "Select number of meals today: 🍽️", 
         min_value=1, max_value=8, 
         value=st.session_state["num_meals"], 
         key="num_meals_input"
@@ -171,7 +172,7 @@ def show():
                 total_macros["Fats"]     += macros["fats"]
 
             # Save meal button
-            if st.button(f"💾 Save Meal {meal_num}", key=f"save_meal_btn_{meal_num}"):
+            if st.button(f"Save Meal {meal_num} 💾", key=f"save_meal_btn_{meal_num}"):
                 if not meal_name:
                     st.warning(f"⚠️ Please provide a meal name for Meal {meal_num}.")
                 else:
@@ -204,14 +205,14 @@ def show():
    
 
     # Summaries of daily macros
-    st.subheader("📋 Daily Macro Summary")
+    st.subheader("Daily Macro Summary 📋")
     st.write(f"**Calories:** {total_macros['Calories']:.1f} kcal")
     st.write(f"**Protein:**  {total_macros['Protein']:.1f} g")
     st.write(f"**Carbs:**    {total_macros['Carbs']:.1f} g")
     st.write(f"**Fats:**     {total_macros['Fats']:.1f} g")
 
     # Create a bar chart for macros (excluding calories)
-    st.subheader("📊 Daily Macro Breakdown")
+    st.subheader("Daily Macro Breakdown 📊")
     macro_names = ["Protein", "Carbs", "Fats"]
     macro_values = [total_macros[m] for m in macro_names]
 

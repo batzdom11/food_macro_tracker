@@ -5,7 +5,7 @@ from config import BASE_API_URL
 #BASE_API_URL = "https://food-macro-tracker.onrender.com"
 
 def show():
-    st.title("🔐 Login")
+    st.title("Login 🔐")
 
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")

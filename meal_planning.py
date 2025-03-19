@@ -5,7 +5,7 @@ import pandas as pd
 from config import BASE_API_URL
 
 def show():
-    st.title("🍽️ Meal Planning")
+    st.title("Meal Planning 🍽️")
 
     # 1) Ensure user is logged in
     user_id = st.session_state.get("user_id")
@@ -21,7 +21,7 @@ def show():
     default_fats = meal_plan_macros.get("fats", 50)
 
     # 3) Macro Input Section
-    st.subheader("📊 Enter Your Target Macros")
+    st.subheader("Enter Your Target Macros 📊")
 
     target_protein = st.number_input(
         "Target Protein (g)", min_value=0, step=1, value=int(default_protein)
@@ -38,7 +38,7 @@ def show():
     st.markdown(f"### 🎯 Calculated Target Calories: **{target_calories:.0f} kcal**")
 
     # 4) Meal Plan Type Selection
-    st.subheader("📌 Choose Meal Plan Type")
+    st.subheader("Choose Meal Plan Type 📌")
     meal_plan_type = st.radio(
         "How should the AI generate your meal plan?",
         ["Use my food list", "Suggest own foods"],
@@ -113,7 +113,7 @@ def show():
                 meal_plan = response_json.get("meal_plan", {})
 
                 if meal_plan and isinstance(meal_plan, dict) and "meals" in meal_plan:
-                    st.subheader("🥗 AI-Generated Meal Plan")
+                    st.subheader("AI-Generated Meal Plan 🥗")
 
                     for meal_item in meal_plan["meals"]:
                         st.markdown(f"#### 🍽️ {meal_item['meal']}")

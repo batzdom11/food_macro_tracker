@@ -13,7 +13,7 @@ body_fat_options = [
 ]
 
 def show():
-    st.title("🎯 Target Macro Suggestions")
+    st.title("Target Macro Suggestions 🎯")
 
     # Ensure user is logged in
     user_id = st.session_state.get("user_id")
@@ -43,7 +43,7 @@ def show():
     fats_val = existing_data["fats"] if existing_data else 0.0
 
     # Body Stats Inputs
-    st.subheader("💪 Enter Your Body Stats")
+    st.subheader("Enter Your Body Stats 💪")
     weight = st.number_input("Weight (kg)", value=float(weight_val), step=0.1)
     height = st.number_input("Height (cm)", value=float(height_val), step=1.0)
 
@@ -62,7 +62,7 @@ def show():
     st.success(f"Selected body fat: {body_fat}%")
 
     # Activity Level
-    st.subheader("💪 Select Your Activity Level")
+    st.subheader("Select Your Activity Level 💪")
     activity_options = [
         "Sedentary (Little to no exercise)",
         "Lightly active (1-3 days/week)",
@@ -73,7 +73,7 @@ def show():
     activity_level = st.selectbox("Activity Level:", options=activity_options, index=activity_options.index(activity_lvl))
 
     # Goal Selection
-    st.subheader("🎯 Select Your Goal")
+    st.subheader("Select Your Goal 🎯")
     goal_options = [
         "Gain weight and muscle",
         "Maintain weight, lose fat",
