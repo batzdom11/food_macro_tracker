@@ -120,7 +120,6 @@ class DailyMacroCreate(BaseModel):
     fats: float
     calories: float
 
-
 # Dependency to get DB session
 def get_db():
     db = SessionLocal()
