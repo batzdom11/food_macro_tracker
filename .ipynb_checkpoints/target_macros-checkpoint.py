@@ -147,7 +147,7 @@ def show():
 
     with calc_button_col:
         if st.button("Calculate & Save Target Macros"):
-            lbm = weight * (1 - (body_fat / 100.0))
+            lbm = weight * (1 - (st.session_state["selected_body_fat"] / 100.0))
             bmr = 370 + (21.6 * lbm)
 
             act_map = {activity: mult for activity, mult in zip(activity_options, [1.2, 1.375, 1.55, 1.725, 1.9])}
