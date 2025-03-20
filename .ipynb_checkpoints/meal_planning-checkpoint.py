@@ -149,25 +149,35 @@ def show():
                 if response.status_code == 200:
                     response_json = response.json()
                     meal_plan_raw = response_json.get("meal_plan", "")
-                
-                    # Ensure we parse the response correctly
-                    try:
-                        # Strip unwanted formatting (triple backticks, extra text)
-                        meal_plan_cleaned = meal_plan_raw.strip("`").strip()
-                
-                        # Extract only the JSON part if extra text is included
-                        json_start = meal_plan_cleaned.find("{")
-                        json_end = meal_plan_cleaned.rfind("}")
-                        if json_start != -1 and json_end != -1:
-                            meal_plan_cleaned = meal_plan_cleaned[json_start : json_end + 1]
-                
-                        # Attempt JSON parsing
-                        meal_plan = json.loads(meal_plan_cleaned)
-                
-                    except json.JSONDecodeError as e:
-                        st.error(f"❌ JSON Parse Error: {str(e)}")
-                        st.text(meal_plan_raw)  # Show raw response to debug
-                        return  # Stop execution if parsing fails
+                    
+                    # If the response is already a dict, assume it's valid JSON
+                    if isinstance(meal_plan_raw, dict):
+                        meal_plan = meal_plan_raw  # No need to process further
+                    
+                    # If it's a string, clean and parse it
+                    elif isinstance(meal_plan_raw, str):
+                        try:
+                            # Remove potential triple backticks or extra text
+                            meal_plan_cleaned = meal_plan_raw.strip("`").strip()
+                            
+                            # Extract only the JSON part if extra text is included
+                            json_start = meal_plan_cleaned.find("{")
+                            json_end = meal_plan_cleaned.rfind("}")
+                            if json_start != -1 and json_end != -1:
+                                meal_plan_cleaned = meal_plan_cleaned[json_start : json_end + 1]
+                            
+                            # Parse JSON
+                            meal_plan = json.loads(meal_plan_cleaned)
+                    
+                        except json.JSONDecodeError as e:
+                            st.error(f"❌ JSON Parse Error: {str(e)}")
+                            st.text(meal_plan_raw)  # Show raw response to debug
+                            return  # Stop execution if parsing fails
+                    
+                    else:
+                        st.error("⚠️ Unexpected API response format. Meal plan is neither JSON nor a valid string.")
+                        st.json(response_json)  # Debugging output
+                        return
                 
                     if meal_plan and isinstance(meal_plan, dict) and "meals" in meal_plan:
                         st.subheader("AI-Generated Meal Plan")
