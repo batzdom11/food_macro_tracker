@@ -160,7 +160,7 @@ def show():
             new_fats = round(target_cals * 0.25 / 9)
             new_carbs = round((target_cals - (new_protein * 4 + new_fats * 9)) / 4)
 
-            payload = {"weight": weight, "height": height, "body_fat": body_fat, "activity_level": activity_level, "goal": goal, "tdee": round(new_tdee), "target_calories": target_cals, "protein": new_protein, "carbs": new_carbs, "fats": new_fats}
+            payload = {"weight": weight, "height": height, "body_fat": st.session_state["selected_body_fat"], "activity_level": activity_level, "goal": goal, "tdee": round(new_tdee), "target_calories": target_cals, "protein": new_protein, "carbs": new_carbs, "fats": new_fats}
 
             save_url = f"{BASE_API_URL}/target_macros/{user_id}"
             resp = requests.post(save_url, json=payload)
