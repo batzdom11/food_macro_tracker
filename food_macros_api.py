@@ -83,6 +83,11 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Pydantic schema
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
 class FoodCreate(BaseModel):
     name: str
     calories: float
@@ -147,9 +152,9 @@ def register(credentials: dict, db: Session = Depends(get_db)):
     return {"message": "User created successfully!"}
 
 @app.post("/login/")
-def login(credentials: dict, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == credentials["username"]).first()
-    if not user or not pwd_context.verify(credentials["password"], user.hashed_password):
+def login(credentials: LoginRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == credentials.username).first()
+    if not user or not pwd_context.verify(credentials.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
     return {"id": user.id, "username": user.username}
 
