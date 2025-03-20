@@ -259,7 +259,7 @@ def generate_meal(data: dict, db: Session = Depends(get_db)):
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini-2024-07-18",
             messages=[
-                {"role": "system", "content": "You are a nutrition assistant. Always respond in valid JSON format."},
+                {"role": "system", "content": "You are a nutrition assistant. Always respond in valid JSON format. No backticks, disclaimers or similar."},
                 {"role": "user", "content": final_prompt}
             ],
             response_format={"type": "json_object"}

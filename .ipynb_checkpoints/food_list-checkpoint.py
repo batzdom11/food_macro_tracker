@@ -3,9 +3,24 @@ import requests
 import pandas as pd
 from config import BASE_API_URL
 
+# CSS for bordered sections
+border_style = """
+    <style>
+        .bordered-box {
+            border: 1px solid #ddd;
+            padding: 1px;
+            border-radius: 1px;
+            margin-bottom: 1px;
+            background-color: #f9f9f9;
+        }
+    </style>
+"""
 
 def show():
     st.title("Food List & Management 🥗")
+
+    # Inject CSS styling
+    st.markdown(border_style, unsafe_allow_html=True)
 
     # Ensure user is logged in
     user_id = st.session_state.get("user_id")
@@ -31,88 +46,101 @@ def show():
 
     foods = get_food_list()
 
-    # Display the food list as a DataFrame for better structure
-    st.subheader("Your Food List 📋")
-    if foods:
-        df_foods = pd.DataFrame(foods)
-        df_display = df = df = foods if foods else []
-        df = pd.DataFrame(df_rows := [{
-            "Name": food['name'],
-            "Calories": food['calories'],
-            "Protein (g)": food['protein'],
-            "Carbs (g)": food['carbs'],
-            "Fats (g)": food['fats']
-        } for food in foods])
+    # Display the food list
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Your Food List")
 
-        st.dataframe(df, use_container_width=True)
-    else:
-        st.info("No foods available. Add some below!")
+        if foods:
+            df = pd.DataFrame([
+                {
+                    "Name": food['name'],
+                    "Calories": food['calories'],
+                    "Protein (g)": food['protein'],
+                    "Carbs (g)": food['carbs'],
+                    "Fats (g)": food['fats']
+                } for food in foods
+            ])
+            st.dataframe(df, use_container_width=True)
+        else:
+            st.info("No foods available. Add some below!")
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Delete a Food
-    st.subheader("Delete a Food 🗑️")
-    food_to_delete = st.selectbox("Select a food to delete", [f["name"] for f in foods] if foods else [])
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Delete a Food")
+        food_to_delete = st.selectbox("Select a food to delete", [f["name"] for f in foods] if foods else [])
 
-    if st.button("Delete Food"):
-        if food_to_delete:
-            try:
-                response = requests.delete(f"{BASE_API_URL}/foods/{user_id}/{food_to_delete}")
-                if response.status_code == 200:
-                    st.success(f"✅ {food_to_delete} deleted successfully!")
-                    st.rerun()
-                else:
-                    st.error(f"❌ Error: {response.json().get('detail', 'Unknown error')}")
-            except requests.exceptions.RequestException as e:
-                st.error(f"❌ API request failed: {str(e)}")
-        else:
-            st.warning("⚠️ No food selected.")
+        if st.button("Delete Food"):
+            if food_to_delete:
+                try:
+                    response = requests.delete(f"{BASE_API_URL}/foods/{user_id}/{food_to_delete}")
+                    if response.status_code == 200:
+                        st.success(f"✅ {food_to_delete} deleted successfully!")
+                        st.rerun()
+                    else:
+                        st.error(f"❌ Error: {response.json().get('detail', 'Unknown error')}")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"❌ API request failed: {str(e)}")
+            else:
+                st.warning("⚠️ No food selected.")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Search and auto-fill macros
-    st.subheader("Search Food Macros 🔍")
-    search_food_name = st.text_input("Enter a food name to search:")
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Search Food Macros")
+        search_food_name = st.text_input("Enter a food name to search:")
 
-    if st.button("Search Macros"):
-        if search_food_name:
-            try:
-                response = requests.get(f"{macros_api_url}{search_food_name}")
-                if response.status_code == 200:
-                    st.session_state["food_macros"] = response.json()
-                    st.success(f"✅ Macros for {search_food_name} loaded.")
-                else:
-                    st.error(f"❌ Error fetching macros: {response.text}")
-            except requests.exceptions.RequestException as e:
-                st.error(f"❌ API request failed: {str(e)}")
-        else:
-            st.warning("⚠️ Please enter a food name.")
+        if st.button("Search Macros"):
+            if search_food_name:
+                try:
+                    response = requests.get(f"{macros_api_url}{search_food_name}")
+                    if response.status_code == 200:
+                        st.session_state["food_macros"] = response.json()
+                        st.success(f"✅ Macros for {search_food_name} loaded.")
+                    else:
+                        st.error(f"❌ Error fetching macros: {response.text}")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"❌ API request failed: {str(e)}")
+            else:
+                st.warning("⚠️ Please enter a food name.")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Add New Food
-    st.subheader("Add a New Food ➕")
-    food_macros = st.session_state.get("food_macros", {})
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Add a New Food")
+        food_macros = st.session_state.get("food_macros", {})
 
-    new_food_name = st.text_input("Food Name", value=search_food_name)
-    calories = st.number_input("Calories (kcal per 100g)", value=float(food_macros.get("calories", 0.0)), step=1.0)
-    protein = st.number_input("Protein (g)", value=float(food_macros.get("protein", 0.0)), step=0.1)
-    carbs = st.number_input("Carbs (g)", value=float(food_macros.get("carbs", 0.0)), step=0.1)
-    fats = st.number_input("Fats (g)", value=float(food_macros.get("fats", 0.0)), step=0.1)
+        new_food_name = st.text_input("Food Name", value=search_food_name)
+        calories = st.number_input("Calories (kcal per 100g)", value=float(food_macros.get("calories", 0.0)), step=1.0)
+        protein = st.number_input("Protein (g)", value=float(food_macros.get("protein", 0.0)), step=0.1)
+        carbs = st.number_input("Carbs (g)", value=float(food_macros.get("carbs", 0.0)), step=0.1)
+        fats = st.number_input("Fats (g)", value=float(food_macros.get("fats", 0.0)), step=0.1)
 
-    if st.button("Add Food"):
-        if new_food_name:
-            payload = {
-                "name": new_food_name,
-                "calories": calories,
-                "protein": protein,
-                "carbs": carbs,
-                "fats": fats
-            }
-            try:
-                resp = requests.post(foods_api_url, json=payload)
-                if resp.status_code == 200:
-                    st.success(f"✅ {new_food_name} added successfully!")
-                    st.session_state["food_macros"] = {}
-                    st.rerun()
-                else:
-                    detail = resp.json().get('detail', 'Unknown error')
-                    st.error(f"❌ Error saving food: {detail}")
-            except requests.exceptions.RequestException as e:
-                st.error(f"❌ API request failed: {str(e)}")
-        else:
-            st.warning("⚠️ Please enter a food name.")
+        if st.button("Add Food"):
+            if new_food_name:
+                payload = {
+                    "name": new_food_name,
+                    "calories": calories,
+                    "protein": protein,
+                    "carbs": carbs,
+                    "fats": fats
+                }
+                try:
+                    resp = requests.post(foods_api_url, json=payload)
+                    if resp.status_code == 200:
+                        st.success(f"✅ {new_food_name} added successfully!")
+                        st.session_state["food_macros"] = {}
+                        st.rerun()
+                    else:
+                        detail = resp.json().get('detail', 'Unknown error')
+                        st.error(f"❌ Error saving food: {detail}")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"❌ API request failed: {str(e)}")
+            else:
+                st.warning("⚠️ Please enter a food name.")
+        st.markdown("</div>", unsafe_allow_html=True)

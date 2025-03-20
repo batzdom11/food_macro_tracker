@@ -4,16 +4,32 @@ from config import BASE_API_URL
 
 # Define body fat options with labels, images, and corresponding values
 body_fat_options = [
-    {"label": "<12%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150611425.jpg?t=st=1742417011~exp=1742420611~hmac=e25bf96a5ec68acda587131770c24146dfa278c76e8626088a470cfbbf4b4606&w=740", "value": 11},
-    {"label": "12-15%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150611431.jpg?t=st=1742416883~exp=1742420483~hmac=c86a21206df3a6903b75238a4ae265c16b44cd7ed6bf750897ad887b29b5740a&w=740", "value": 13.5},
-    {"label": "15-18%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150564974.jpg?t=st=1742417060~exp=1742420660~hmac=573a53c12a0ffed1b7d0302a912fdec0944fbeb955dd364a150c223bc8ab6000&w=740", "value": 16.5},
-    {"label": "18-21%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150564968.jpg?t=st=1742417151~exp=1742420751~hmac=210e474a8d291a67bf24c27819513f6fa53ce58716ba72a68b7788a15edcbe03&w=740", "value": 19.5},
-    {"label": "21-25%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150564971.jpg?t=st=1742417326~exp=1742420926~hmac=c5232a209c43501fbbd00ad2b0c9b545b6e223376b04b042b54d2813a088acdb&w=740", "value": 23},
-    {"label": ">25%+", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150611434.jpg?t=st=1742416806~exp=1742420406~hmac=66c58a1037d3b7e3b6b4bcbf2a9ea30ab2a3b37e33bdde8db99e5930ea3d35d6&w=740", "value": 27}
+    {"label": "<12%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150611425.jpg?w=740", "value": 11},
+    {"label": "12-15%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150611431.jpg?w=740", "value": 13.5},
+    {"label": "15-18%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150564974.jpg?w=740", "value": 16.5},
+    {"label": "18-21%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150564968.jpg?w=740", "value": 19.5},
+    {"label": "21-25%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150564971.jpg?w=740", "value": 23},
+    {"label": ">25%", "image": "https://img.freepik.com/free-vector/hand-drawn-human-body-outline-illustration_23-2150611434.jpg?w=740", "value": 27}
 ]
 
+# CSS for bordered sections
+border_style = """
+    <style>
+        .bordered-box {
+            border: 1px solid #ddd;
+            padding: 1px;
+            border-radius: 10px;
+            margin-bottom: 3px;
+            background-color: #f9f9f9;
+        }
+    </style>
+"""
+
 def show():
-    st.title("🎯 Target Macro Suggestions")
+    st.title("Target Macro Suggestions 🎯")
+
+    # Inject CSS styling
+    st.markdown(border_style, unsafe_allow_html=True)
 
     # Ensure user is logged in
     user_id = st.session_state.get("user_id")
@@ -43,52 +59,88 @@ def show():
     fats_val = existing_data["fats"] if existing_data else 0.0
 
     # Body Stats Inputs
-    st.subheader("💪 Enter Your Body Stats")
-    weight = st.number_input("Weight (kg)", value=float(weight_val), step=0.1)
-    height = st.number_input("Height (cm)", value=float(height_val), step=1.0)
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Enter Your Body Stats")
+    
+        col1, col2 = st.columns(2)
+    
+        with col1:
+            weight = st.number_input("Weight (kg)", value=float(weight_val), step=0.1)
+    
+        with col2:
+            height = st.number_input("Height (cm)", value=float(height_val), step=1.0)
+    
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    # Body Fat Selection with Images
-    st.subheader("📏 Select Your Approximate Body Fat (%)")
-    if "selected_body_fat" not in st.session_state:
-        st.session_state["selected_body_fat"] = body_fat_val
-
-    cols = st.columns(len(body_fat_options))
-    for idx, (col, option) in enumerate(zip(cols, body_fat_options)):
-        col.image(option["image"], caption=option["label"], width=100)
-        if col.button(option["label"], key=f"bodyfat_{idx}"):
-            st.session_state["selected_body_fat"] = option["value"]
-
-    body_fat = st.session_state["selected_body_fat"]
-    st.success(f"Selected body fat: {body_fat}%")
+        # Body Fat Selection with Images
+        # Body Fat Selection with Slider Gallery
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Select Your Approximate Body Fat (%)")
+        
+        # Initialize slider index based on existing selection
+        body_fat_values = [option["value"] for option in body_fat_options]
+        default_idx = min(range(len(body_fat_values)),
+                          key=lambda i: abs(body_fat_values[i] - body_fat_val))
+        
+        # Slider for selecting body fat
+        selected_index = st.slider(
+            "Move slider to select your estimate body fat percentage range",
+            min_value=0,
+            max_value=len(body_fat_options) - 1,
+            value=default_idx,
+            format="%d")
+        
+        # Display only the selected image
+        selected_option = body_fat_options[selected_index]
+        col1, col2, col3 = st.columns([1, 2, 1])
+        
+        with col2:
+            st.image(selected_option["image"], caption=selected_option["label"], width=200)
+        
+        # Update session state based on selection
+        st.session_state["selected_body_fat"] = selected_option["value"]
+        st.success(f"Selected body fat: {selected_option['label']}")
+        
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Activity Level
-    st.subheader("💪 Select Your Activity Level")
-    activity_options = [
-        "Sedentary (Little to no exercise)",
-        "Lightly active (1-3 days/week)",
-        "Moderately active (3-5 days/week)",
-        "Very active (6-7 days/week)",
-        "Super active (Athlete, intense daily workouts)"
-    ]
-    activity_level = st.selectbox("Activity Level:", options=activity_options, index=activity_options.index(activity_lvl))
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Select Your Activity Level")
+        activity_options = [
+            "Sedentary (Little to no exercise)",
+            "Lightly active (1-3 days/week)",
+            "Moderately active (3-5 days/week)",
+            "Very active (6-7 days/week)",
+            "Super active (Athlete, intense daily workouts)"
+        ]
+        activity_level = st.selectbox("Activity Level:", options=activity_options, index=activity_options.index(activity_lvl))
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Goal Selection
-    st.subheader("🎯 Select Your Goal")
-    goal_options = [
-        "Gain weight and muscle",
-        "Maintain weight, lose fat",
-        "Lose weight and fat",
-        "Lose weight at maximum recommended pace"
-    ]
-    goal = st.radio("Goal:", goal_options, index=goal_options.index(goal_val))
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Select Your Goal")
+        goal_options = [
+            "Gain weight and muscle",
+            "Maintain weight, lose fat",
+            "Lose weight and fat",
+            "Lose weight at maximum recommended pace"
+        ]
+        goal = st.radio("Goal:", goal_options, index=goal_options.index(goal_val))
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Display Existing Macros
-    st.write("### Current Calculated Macros:")
-    st.write(f"**TDEE:** {tdee_val} kcal/day")
-    st.write(f"**Target Calories:** {target_cals_val} kcal/day")
-    st.write(f"**Protein:** {prot_val} g/day")
-    st.write(f"**Carbs:** {carbs_val} g/day")
-    st.write(f"**Fats:** {fats_val} g/day")
+    with st.container():
+        st.markdown('<div class="bordered-box">', unsafe_allow_html=True)
+        st.subheader("Current Calculated Macros:")
+        st.write(f"**TDEE:** {tdee_val} kcal/day")
+        st.write(f"**Target Calories:** {target_cals_val} kcal/day")
+        st.write(f"**Protein:** {prot_val} g/day")
+        st.write(f"**Carbs:** {carbs_val} g/day")
+        st.write(f"**Fats:** {fats_val} g/day")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Calculate, Save and Transfer Macros
     calc_button_col, transfer_button_col = st.columns(2)
@@ -122,5 +174,3 @@ def show():
         if st.button("Use These Macros in Meal Planning"):
             st.session_state["meal_plan_macros"] = {"target_calories": target_cals_val, "protein": prot_val, "carbs": carbs_val, "fats": fats_val}
             st.success("Macros transferred to Meal Planning!")
-
-    st.write("*Tip: After transferring macros, go to the Meal Planning page.*")
